@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.navercorp</groupId>
-  <artifactId>allocating_task_web</artifactId>
+  <artifactId>allocating_task</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
-  <name>allocating_task_web</name>
+  <name>allocating_task</name>
   <url>http://maven.apache.org</url>
 
   <!-- 定义版本号 -->
