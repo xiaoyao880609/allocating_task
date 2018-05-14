@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.naver.allocating.task.dao.TaskDao">
+	<resultMap type="task" id="taskResult">
+		<id column="hist_no" property="histNo"/>
+	    <result column="tittle" property="tittle" />
+	    <result column="week" property="week" />
+	    <result column="status" property="status" />
+	    <result column="language" property="language" />
+	    <result column="author" property="author" />
+	    <result column="holder" property="holder" />
+	    <result column="note" property="note" />
+	    <result column="release_time" property="releaseTime" />
+	</resultMap>
+
+	<insert id="addTask" parameterType="Task">
+		INSERT INTO task (
+		    language,
+		    tittle,
+		    week,
+		    author,
+		    holder,
+		    note,
+		    cre_ymdt,
+		    release_time
+		)
+		VALUES (
+			#{language},
+			#{tittle},
+			#{week},
+			#{author},
+			#{holder},
+			#{note},
+		    NOW(),
+			#{releaseTime}
+		)
+	</insert>
+
+	<update id="updateTask" parameterType="Task">
+		UPDATE task
+		SET
+			tittle = #{tittle},
+			status = #{status},
+			author = #{author},
+			holder = #{holder},
+			note = #{note},
+			release_time = #{releaseTime}
+		WHERE
+			hist_no = #{histNo}
+	</update>
+
+	<delete id="deleteTask" parameterType="Task">
+		DELETE FROM
+			task
+		WHERE
+			hist_no = #{histNo}
+	</delete>
+
+	<update id="resetTask">
+		UPDATE task
+		SET
+			status = 0,
+			release_time = ''
+		WHERE
+			status = 4
+		AND
+			week = WEEKDAY(DATE_SUB(CURDATE(),INTERVAL 1 DAY)) + 1
+	</update>
+
+	<select id="getTaskCnt" resultType="java.lang.Integer">
+		SELECT
+			count(*)
+		FROM
+			task
+		<where>
+			<if test="language != null and language &lt; 2">
+			language = #{language}
+			</if>
+			<if test="tittle != null">
+			AND tittle LIKE CONCAT('%', #{tittle}, '%')
+			</if>
+			<if test="author != null and author != '' ">
+			AND author LIKE CONCAT('%', #{author}, '%')
+			</if>
+			<if test="week != null and week != 0">
+			AND week = #{week}
+			</if>
+			<if test="status != null and status &lt; 6">
+			AND status = #{status}
+			</if>
+		</where>
+	</select>
+
+	<select id="getTaskList" parameterType="Task" resultMap="taskResult">
+		SELECT
+			hist_no,
+			language,
+			tittle,
+			week,
+			status,
+			author,
+			holder,
+			note,
+			release_time
+		FROM
+			task
+		<where>
+			<if test="language != null and language &lt; 2">
+			language = #{language}
+			</if>
+			<if test="tittle != null">
+			AND tittle LIKE CONCAT('%', #{tittle}, '%')
+			</if>
+			<if test="author != null and author != '' ">
+			AND author LIKE CONCAT('%', #{author}, '%')
+			</if>
+			<if test="week != null and week != 0">
+			AND week = #{week}
+			</if>
+			<if test="status != null and status &lt; 6">
+			AND status = #{status}
+			</if>
+		</where>
+		ORDER BY cre_ymdt DESC
+		LIMIT #{offSet}, #{pageSize}
+	</select>
+
+	<select id="getTaskList4Export" parameterType="Task" resultMap="taskResult">
+		SELECT
+			hist_no,
+			language,
+			tittle,
+			week,
+			status,
+			author,
+			holder,
+			note,
+			release_time
+		FROM
+			task
+		<where>
+			<if test="language != null and language &lt; 2">
+			language = #{language}
+			</if>
+			<if test="tittle != null">
+			AND tittle LIKE CONCAT('%', #{tittle}, '%')
+			</if>
+			<if test="author != null and author != '' ">
+			AND author LIKE CONCAT('%', #{author}, '%')
+			</if>
+			<if test="week != null and week != 0">
+			AND week = #{week}
+			</if>
+			<if test="status != null and status &lt; 6">
+			AND status = #{status}
+			</if>
+		</where>
+	</select>
+
+</mapper>
